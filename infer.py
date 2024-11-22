@@ -36,8 +36,8 @@ def save_maps(
     fov_x, fov_y = utils3d.numpy.intrinsics_to_fov(intrinsics)
     with open(save_path / 'fov.json', 'w') as f:
         json.dump({
-            'fov_x': round(np.rad2deg(fov_x), 2),
-            'fov_y': round(np.rad2deg(fov_y), 2),
+            'fov_x': float(round(np.rad2deg(fov_x), 2)),
+            'fov_y': float(round(np.rad2deg(fov_y), 2)),
         }, f)
 
 def save_glb(
@@ -115,6 +115,7 @@ def main(
     model = MoGeModel.from_pretrained(pretrained_model_name_or_path).to(device).eval()
 
     for image_path in (pbar := tqdm(image_paths, desc='Inference', disable=len(image_paths) <= 1)):
+        print(f"Processing {image_path}......")
         image = cv2.cvtColor(cv2.imread(str(image_path)), cv2.COLOR_BGR2RGB)
         if resize_to is not None:
             height, width = min(resize_to, int(resize_to * height / width)), min(resize_to, int(resize_to * width / height))
@@ -163,6 +164,6 @@ def main(
                 process=False
             ).show()  
 
-
+# CUDA_VISIBLE_DEVICES="9" python infer.py --input test_data/test_1_resized --output out/test_1_depth_1122 --maps --glb --ply
 if __name__ == '__main__':
     main()
